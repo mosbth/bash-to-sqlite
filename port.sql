@@ -1,6 +1,6 @@
+DROP TABLE IF EXISTS Port;
 CREATE TABLE IF NOT EXISTS Port (
     id INTEGER PRIMARY KEY,
-    server TEXT,
     port INTEGER,
     owner TEXT,
     created TEXT,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Port (
     deleted TEXT
 );
 
--- for port in {8000..8200}; do sqlite3 port.sqlite "INSERT INTO Port (server, port) VALUES (\"nodejs1.student.bth.se\", $port);"; done
+-- for port in {8000..8200}; do sqlite3 port.sqlite "INSERT INTO Port (port) VALUES ($port);"; done
 
 -- sqlite3 port.sqlite "SELECT server, port FROM Port WHERE owner=\"mos\";"
 -- sqlite3 --column port.sqlite "SELECT * FROM Port;"

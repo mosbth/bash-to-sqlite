@@ -119,17 +119,32 @@ function app-allocate
 # Function for taking care of specific command. Name the function as the
 # command is named.
 #
-function app-calendar
+function app-get
 {
-    local events="$1"
-    
-    echo "This is output from command3, showing the current calender."
-    cal -3
-    
-    if [ "$events" = "events" ]; then
-        echo
-        calendar
+    local user="$1";
+
+    if [[ ! $user ]]; then
+        badUsage "Missing username."
+        exit 1
     fi
+
+    local port=$( sqlite3 --column port.sqlite "SELECT port FROM Port WHERE owner=\"$user\";" )
+
+    if [[ $port ]]; then
+        echo $port
+        exit 0
+    fi
+
+    sqlite3 port.sqlite "UPDATE Port SET owner = \"$user\" WHERE port = (SELECT MIN(port) FROM Port WHERE owner IS NULL);"
+
+    port=$( sqlite3 --column port.sqlite "SELECT port FROM Port WHERE owner=\"$user\";" )
+
+    if [[ $port ]]; then
+        echo $port
+        exit 0
+    fi
+
+    exit 2
 }
 
 
@@ -153,6 +168,7 @@ do
 
         view             \
         | allocate       \
+        | get            \
         | calendar)
             command=$1
             shift
